@@ -15,9 +15,9 @@ Parent: Basic
 Description: "Genomic Study profile based on Basic, trying out R5 extensions from GenomicStudy resource"
 * identifier ^short = "GenomicStudy.identifier"
 * code = #GenomicStudy
-* subject 0..0
-* created 0..0
-* author 0..0
+* subject ^short = "GenomicStudy.subject"
+* subject only Reference(Patient or Group or Substance or BiologicallyDerivedProduct)
+* created ^short = "GenomicStudy.startDate"
 * modifierExtension contains
     http://hl7.org/fhir/5.0/StructureDefinition/extension-GenomicStudy.status named status 1..1
 * extension contains
@@ -41,13 +41,51 @@ and http://hl7.org/fhir/5.0/StructureDefinition/extension-GenomicStudy.analysis 
   // this worked, so do MS -- seems like we have to profile something for snapshot table to work
   // however, if we don't do this, the elements are still defined (the example below still works) -- this is just about triggering snapshot table to work as we expect
 
+
 Instance: GenomicStudyBackportTestInstance
 InstanceOf: GenomicStudyBackportTest
 Description: "Example of GenomicStudyBackportTest"
 Usage: #example
 * modifierExtension[status].valueCode = #available
+* extension[description].valueMarkdown = "Here is a great description in *markdown*"
 * extension[analysis][+]
   * extension[methodType].valueCodeableConcept = http://hl7.org/fhir/ValueSet/genomicstudy-methodtype#mutation-scanning-of-the-entire-coding-region
-  * extension[title].valueString = "Analysis Title - this is exciting!"
+  * extension[title].valueString = "Exome sequencing"
   * extension[output]
     * extension[type].valueCodeableConcept = http://hl7.org/fhir/ValueSet/genomicstudy-dataformat#vcf
+    * extension[file].valueReference = Reference(genomicVCFfile-cnv)
+* extension[analysis][+]
+  * extension[title].valueString = "Some kind of analysis on a VCF"
+  * extension[input]
+    * extension[type].valueCodeableConcept = http://hl7.org/fhir/ValueSet/genomicstudy-dataformat#vcf
+    * extension[file].valueReference = Reference(genomicVCFfile-cnv)
+// generates an error   * extension[generatedBy].valueReference = Reference(GenomicStudyBackportTestInstance)
+  * extension[output]
+    * extension[type].valueCodeableConcept = http://hl7.org/fhir/ValueSet/genomicstudy-dataformat#vcf
+    * extension[file].valueReference = Reference(genomicVCFfile-annotated)
+
+Instance: genomicVCFfile-cnv
+InstanceOf: DocumentReference
+Description: "genomicVCFfile_cnv: A sample Document Reference instance representing a VCF file that may be used as input or output of a genomic analysis pipeline."
+Usage: #example
+* identifier.system = "http://www.somesystemabc.net/identifiers/files"
+* identifier.value = "11121"
+* status = #current
+* docStatus = #preliminary
+* description = "genomicVCFfile_cnv: A sample Document Reference instance representing a VCF file that may be used as input or output of a genomic analysis pipeline."
+* content.attachment.url = "https://chat.fhir.org/user_uploads/10155/dxn3s6R1Y-Cv0h-1bTCu-JvY/genomicVCFFile_cnv.vcf"
+* content.attachment.title = "genomicVCFfile_cnv"
+* content.attachment.creation = "2019-03-01T01:02:01+01:00"
+
+Instance: genomicVCFfile-annotated
+InstanceOf: DocumentReference
+Description: "genomicVCFfile-annotated"
+Usage: #example
+* identifier.system = "http://www.somesystemabc.net/identifiers/files"
+* identifier.value = "11135"
+* status = #current
+* docStatus = #preliminary
+* description = "Additional annotations applied to a VCF"
+* content.attachment.url = "https://chat.fhir.org/user_uploads/10155/dxn3s6R1Y-Cv0h-1bTCu-JvY/genomicVCFFile_cnv.vcf"
+* content.attachment.title = "genomicVCFfile-annotated"
+* content.attachment.creation = "2019-03-01T12:02:01+01:00"
