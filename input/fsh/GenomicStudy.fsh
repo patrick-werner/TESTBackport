@@ -3,7 +3,7 @@ Id:          genomic-study-reason-extension
 Title:       "GenomicStudy Reason Extension"
 Description: "GenomicStudy Reason Extension - Needed some CodeableReference does not exist in R4"
 * extension contains reason 0..1 // simulate CodeableReference as best we can for now
-* extension[reason] 
+* extension[reason]
   * ^short = "GenomicStudy.reason"
   * value[x] only CodeableConcept or Reference(Condition or Observation)
 
